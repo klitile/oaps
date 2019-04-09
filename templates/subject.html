@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ subject.title }}-Article List
+{% endblock %}
+
+{% block content %}
+<div class="particles">
+    <h1>HOT</h1>
+{% for article in particles %}
+            <h2><a href="/article/{{ article.id }}"> {{ loop.index }}.{{ article }}(popularity score:{{ article.score }})</a></h2>
+        {% endfor %}
+</div>
+<div class="articles">
+    <h1>All Articles</h1>
+        {% for article in articles %}
+            <h2><a href="/article/{{ article.id }}"> {{ loop.index }}.{{ article }}(popularity score:{{ article.score }})</a></h2>
+        {% endfor %}
+ </div>
+{% endblock %}

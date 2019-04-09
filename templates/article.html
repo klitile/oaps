@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ article.title }}-Article
+{% endblock %}
+
+{% block content %}
+<div class="articlePage">
+        Title:{{ article.title }}<br/>
+        PostTime:{{ article.postTime }}<br/>
+        Email:{{ user.email }}<br/>
+        Abstract:{{ article.abstract }}<br/>
+        Highlight Part:{{ article.highlight_part }}<br/>
+        Download Link:<a href="../{{ article.dl_link }}">download</a>
+        <button><a href="../upvote/{{ article.id }}">up:{{ article.upvoteNum }}</a></button>
+        <button><a href="../downvote/{{ article.id }}">down:{{ article.downvoteNum }}</a></button>
+ </div>
+<div class="post comment" >
+    <form action="/{{ article.id }}/comment" method="post"  id="form">
+         Email:<input type="email" name="email" required><br/>
+         Content:<br/> <textarea name="content" id="" cols="30" rows="10"></textarea><br/>
+    </form>
+    <input type="text" id="code" disabled>
+    <input type="text" id="input">
+    <button onclick="validate()">submit</button>
+</div>
+ <div class="comment" >
+    {% for comment in comments %}
+        <p>Email:{{ comment.email }}</p>
+        <p>Content:{{ comment.content }}</p>
+        <button><a href="../cupvote/{{ comment.id }}">up:{{ comment.upvoteNum }}</a></button>
+        <button><a href="../cdownvote/{{ comment.id }}">down:{{ comment.downvoteNum }}</a></button>
+    {% endfor %}
+
+ </div>
+
+    <script>
+    var code; // 在全局定义验证码
+
+// 生成验证码
+window.onload = function createCode() {
+	code = "";
+	var codeLength = 4;// 验证码的长度
+	var checkCode = document.getElementById("code");
+	var random = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D',
+			'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
+			'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');// 随机数
+	for (var i = 0; i < codeLength; i++) {// 循环操作
+		var index = Math.floor(Math.random() * 36);// 取得随机数的索引（0~35）
+		code += random[index];// 根据索引取得随机数加到code上
+	}
+	checkCode.value = code;// 把code值赋给验证码
+}
+var form = document.getElementById('form');
+
+// 校验验证码
+function validate() {
+	var inputCode = document.getElementById("input").value.toUpperCase(); // 取得输入的验证码并转化为大写
+	if (inputCode.length <= 0) { // 若输入的验证码长度为0
+		alert("Please input captcha"); // 则弹出请输入验证码
+		return;
+	} else if (inputCode != code) { // 若输入的验证码与产生的验证码不一致时
+		alert("Wrong captcha"); // 则弹出验证码输入错误
+		createCode();// 刷新验证码
+		document.getElementById("input").value = "";// 清空文本框
+		return;
+	} else {
+             form.submit();
+	}
+}
+
+    </script>
+{% endblock %}

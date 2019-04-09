@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Search Result
+{% endblock %}
+
+{% block content %}
+    {% for article in articles %}
+         <h1><a href="/article/{{ article.id }}"> {{ loop.index }}.{{ article }}</a></h1>
+    {% endfor %}
+    {% for comment in comments %}
+        Email:{{ comment.email }}<br/>
+        Date:{{ comment.postTime }}<br/>
+        Content:{{ comment.content }}<br/>
+        <a href="/article/{{ comment.article_id }}">go to article</a>
+        <button><a href="cupvote/{{ comment.id }}">up:{{ comment.upvoteNum }}</a></button>
+        <button><a href="cdownvote/{{ comment.id }}">down:{{ comment.downvoteNum }}</a></button>
+        <br/>
+    {% endfor %}
+{% endblock %}
