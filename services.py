@@ -24,8 +24,14 @@ class SubjectService:
         db.session.add(subject)
         db.session.commit()
 
-
 class ArticleService:
+    def commit(self):
+        db.session.commit()
+
+    def delete(self,article):
+        db.session.delete(article)
+        db.session.commit()
+
     def calPopularity(self,article):
         return article.upvoteNum/max((article.upvoteNum+article.downvoteNum),1)*(article.accessNum*0.3+article.commentNum*0.7)
 
@@ -55,7 +61,7 @@ class ArticleService:
 
     # 考虑名称是否有用错
     def find_by_user(self,user_id):
-        articles = Article.query.filter_by(user_id=user_id)
+        articles = Article.query.filter_by(user_id=user_id).all()
         return articles
 
     def insert(self,article):
@@ -144,6 +150,10 @@ class IPService:
 
 
 class CommentService:
+    def delete(self,comment):
+        db.session.delete(comment)
+        db.session.commit()
+
     def find_by_id(self,comment_id):
         return Comment.query.filter_by(id=comment_id).first()
 
@@ -190,8 +200,16 @@ class CommentService:
     def search(self, content):
         return Comment.query.filter(Comment.content.like('%%%s%%' % content)).all()
 
+class PasswordService:
+    def change(self,password):
+        db.session.commit()
+
+    def get_password(self):
+        return Password.query.first()
+
 subjectService = SubjectService()
 articleService = ArticleService()
 userService = UserService()
 ipService = IPService()
 commentService = CommentService()
+passwordService = PasswordService()

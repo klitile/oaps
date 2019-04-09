@@ -2,7 +2,6 @@ from datetime import time, datetime
 import time
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
-from services import *
 
 import os
 from flask_limiter import Limiter
@@ -17,11 +16,12 @@ limiter = Limiter(
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI']  = 'sqlite:///shcool.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-app.config['MAX_CONTENT_LENGTH'] = 20 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 0.1 * 1024 * 1024
 app.config['DEBUG'] = True
 
 db = SQLAlchemy(app)
-
+from model import *
+from services import *
 
 # 初始化db,并创建models中定义的表格
 with app.app_context(): # 添加这一句，否则会报数据库找不到application和context错误
@@ -57,6 +57,9 @@ def subject(subject_id):
     articles.reverse()
     particles = []
     for article in articles:
+        if article.hided==1:
+            articles.remove(article)
+            continue
         article.score=articleService.calPopularity(article)
         if article.score>=0.3 :
             particles.append(article)
@@ -98,9 +101,13 @@ def postPage():
     处理文章上传
 '''
 @app.route('/upload', methods=['POST'])
-@limiter.limit("1 per minute")
+@limiter.limit("2 per minute")
 def upload():
     form = request.form
+    for blank in form:
+        if form[blank]=='': return "Blank can't be empty!"
+
+    if '@' not in form['email']: return "Wrong email address format!"
     file = request.files['pdf'].read()
     filename = request.files['pdf'].filename
     split = filename.split('.')
@@ -157,7 +164,21 @@ def article(article_id):
         aip = ArticleIp(ip_id=ip.id,article_id=article_id,vote_state=0)
         ipService.insert(aip)
         articleService.addAccess(article)
-    return render_template('article.html',article = article,user=user,comments=comments)
+    return render_template('article.html',article = article,user=user,comments=comments,flag=0)
+
+@app.route('/manage/article/<article_id>')
+def manage_article(article_id):
+    article = articleService.find_by_id(article_id)
+    user = userService.find_by_id(article.user_id)
+    ip = ipService.find_ip_by_ip(request.remote_addr)
+    aip = ipService.find_aip_both(article_id,ip.id)
+    comments = commentService.find_by_articleid(article_id)
+    comments.reverse()
+    if aip is None:#第一次访问
+        aip = ArticleIp(ip_id=ip.id,article_id=article_id,vote_state=0)
+        ipService.insert(aip)
+        articleService.addAccess(article)
+    return render_template('article.html',article = article,user=user,comments=comments,flag=1)
 '''
     文章点赞
 '''
@@ -178,7 +199,7 @@ def article_downvote(article_id):
     文章评论
 '''
 @app.route('/<article_id>/comment',methods=['POST'])
-@limiter.limit("1 per minute")
+@limiter.limit("2 per minute")
 def article_comment(article_id):
     article = articleService.find_by_id(article_id)
     form = request.form
@@ -222,6 +243,11 @@ def author_find():
     if user is None:
         return "Author doesn't exist~!"
     articles = articleService.find_by_user(user.id)
+    for article in articles:
+        article.score=articleService.calPopularity(article)
+        if article.hided==1:
+            articles.remove(article)
+            continue
     comments = commentService.find_by_userid(user.id)
     return render_template('author.html',user=user,articles=articles,comments=comments)
 
@@ -239,6 +265,57 @@ def search():
 @app.route('/donate')
 def donate():
     return render_template('donate.html')
+
+'''
+    管理员页面
+'''
+@app.route('/manage')
+def manage():
+    return render_template('manage.html')
+
+@app.route('/psw_change',methods=['POST'])
+def psw_manage():
+    form = request.form
+    psw = passwordService.get_password()
+    oldpsw = form['old']
+    if oldpsw!=psw.psw: return "wrong old password!"
+    psw.psw = form['new']
+    passwordService.change(psw)
+    return render_template('manage.html')
+
+@app.route('/hide_article',methods=['POST'])
+def hide_article():
+    form= request.form
+    psw = passwordService.get_password()
+    aid = form['aid']
+    input_psw = form['psw']
+    if(input_psw!=psw.psw): return "wrong password!"
+    article = articleService.find_by_id(int(aid))
+    if article.hided == 1:article.hided=0
+    else: article.hided =1
+    articleService.commit()
+    return render_template('manage.html')
+
+@app.route('/delete_article',methods=['POST'])
+def delet_article():
+    form = request.form
+    psw = passwordService.get_password()
+    aid = form['aid']
+    input_psw = form['psw']
+    if(input_psw!=psw.psw): return "wrong password!"
+    article = articleService.find_by_id(int(aid))
+    articleService.delete(article)
+    return render_template('manage.html')
+
+@app.route('/manage/cdelete/<comment_id>',methods=['POST'])
+def cdelete(comment_id):
+    form = request.form
+    psw = passwordService.get_password()
+    input_psw = form['psw']
+    if (input_psw != psw.psw): return "wrong password!"
+    comment = commentService.find_by_id(comment_id)
+    commentService.delete(comment)
+    return redirect('/article/'+str(comment.article_id))
 
 
 if __name__ == '__main__':

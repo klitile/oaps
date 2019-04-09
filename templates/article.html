@@ -8,7 +8,7 @@
 <div class="articlePage">
         Title:{{ article.title }}<br/>
         PostTime:{{ article.postTime }}<br/>
-        Email:{{ user.email }}<br/>
+        Email:{{ user.email[0]+"***"+user.email[user.email.index('@'):] }}<br/>
         Abstract:{{ article.abstract }}<br/>
         Highlight Part:{{ article.highlight_part }}<br/>
         Download Link:<a href="../{{ article.dl_link }}">download</a>
@@ -25,11 +25,18 @@
     <button onclick="validate()">submit</button>
 </div>
  <div class="comment" >
+ <h1>COMMENTS</h1>
     {% for comment in comments %}
-        <p>Email:{{ comment.email }}</p>
-        <p>Content:{{ comment.content }}</p>
+        <p>{{ loop.index }}. Email:{{ comment.email }}</p>
+        <p> Content:{{ comment.content }}</p>
         <button><a href="../cupvote/{{ comment.id }}">up:{{ comment.upvoteNum }}</a></button>
         <button><a href="../cdownvote/{{ comment.id }}">down:{{ comment.downvoteNum }}</a></button>
+        {% if flag==1 %}
+            <form action="../cdelete/{{ comment.id }}" method="post">
+                Password:<input type="password" name="psw">
+                <input type="submit" value="delete">
+            </form>
+        {% endif %}
     {% endfor %}
 
  </div>

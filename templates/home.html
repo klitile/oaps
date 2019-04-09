@@ -8,16 +8,17 @@
 <div class="author">
     <form action="/author" method="post">
         Author Email:<input type="text" name="email" required>
-        <input type="submit">
+        <input type="submit" value="submit">
     </form>
     <form action="/search">
         Content Search:<input type="text" name="content">
-        <input type="submit">
+        <input type="submit" value="submit">
     </form>
 </div>
 <div class="all-subjects">
         {% for subject in subjects %}
-            <h1><a href="/subject/{{ subject.id }}">{{ subject.title }}</a></h1>
+            <h2><a href="/subject/{{ subject.id }}">{{ subject.title }}</a></h2>
+            <p>Description:{{ subject.description }}</p>
         {% endfor %}
  </div>
 {% endblock %}

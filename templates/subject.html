@@ -8,13 +8,21 @@
 <div class="particles">
     <h1>HOT</h1>
 {% for article in particles %}
-            <h2><a href="/article/{{ article.id }}"> {{ loop.index }}.{{ article }}(popularity score:{{ article.score }})</a></h2>
+          <h2><a href="/article/{{ article.id }}"> {{ loop.index }}.{{ article.title }}(popularity score:{{ article.score }})</a></h2>
+            <p>Abstract:{{ article.abstract }}</p>
+            <p>Highlight Part:{{ article.highlight_part }}</p>
+            <p>Post Time:{{ article.postTime }}</p>
+            <p>Access:{{ article.accessNum }} Upvpte:{{ article.upvoteNum }} Downvote:{{ article.downvoteNum }}</p>
         {% endfor %}
 </div>
 <div class="articles">
     <h1>All Articles</h1>
         {% for article in articles %}
-            <h2><a href="/article/{{ article.id }}"> {{ loop.index }}.{{ article }}(popularity score:{{ article.score }})</a></h2>
+            <h2><a href="/article/{{ article.id }}"> {{ loop.index }}.{{ article.title }}(popularity score:{{ article.score }})</a></h2>
+            <p>Abstract:{{ article.abstract }}</p>
+            <p>Highlight Part:{{ article.highlight_part }}</p>
+            <p>Post Time:{{ article.postTime }}</p>
+            <p>Access:{{ article.accessNum }} Upvpte:{{ article.upvoteNum }} Downvote:{{ article.downvoteNum }}</p>
         {% endfor %}
  </div>
 {% endblock %}

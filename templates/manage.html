@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}
+   Manage
+{% endblock %}
+
+{% block content %}
+<div class="pswManage">
+      <h2>Change Psw</h2>
+    <form action="/psw_change" method="post">
+        Old Password: <input type="password" name="old"><br>
+        New Password:<input type="password" name="new"><br>
+    <input type="submit" value="submit">
+    </form>
+    <form action="/hide_article" method="post">
+        Article Id:<input type="text" name="aid">
+        Password: <input type="password" name="psw">
+        <input type="submit" value="hide or unhide">
+    </form>
+    <form action="/delete_article" method="post">
+        Article Id:<input type="text" name="aid">
+        Password: <input type="password" name="psw">
+        <input type="submit" value="delete it!">
+    </form>
+
+ </div>
+
+{% endblock %}

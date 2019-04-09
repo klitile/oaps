@@ -58,7 +58,6 @@ class User(db.Model):
 #拉黑，是否点过赞
 class IP(db.Model):#id和addr有什么不一样？
     __tablename__ = 'ip'
-    __table_args__ = {"useexisting": True}
     id = db.Column(db.Integer, primary_key=True)
     addr = db.Column(db.Text)
     is_blocked = db.Column(db.Integer,default=0)
@@ -76,6 +75,11 @@ class ArticleIp(db.Model):
     ip_id = db.Column(db.Integer, primary_key=True)#是否可以不用加外键
     article_id = db.Column(db.Integer,db.ForeignKey('article.id'),primary_key=True)
     vote_state = db.Column(db.Integer, default=0)
+
+class Password(db.Model):
+    __tablename__ = 'password'
+    id = db.Column(db.Integer,primary_key=True)
+    psw  = db.Column(db.Text)
 
 
 if __name__ == "__main__":
