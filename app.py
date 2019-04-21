@@ -10,7 +10,7 @@ app = Flask(__name__)
 limiter = Limiter(
     app,
     key_func=get_remote_address,
-    default_limits=[],
+      default_limits=[]
 )
 
 basedir = os.path.abspath(os.path.dirname(__file__))

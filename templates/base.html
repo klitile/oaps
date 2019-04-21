@@ -5,14 +5,34 @@
     {# <link rel="stylesheet" href="style.css"/> #}
     <title>{% block title %}{% endblock %} - My Webpage</title>
     {% endblock %}
+    <style>
+        body{
+            background-color: #D3E7E9;
+        }
+        #navigator {
+            background-color: #86989B;
+            color: #ffffff;
+            padding:2px;
+            font-size: 20px;
+        }
+        #navigator a{
+            text-decoration: none;
+            color: white;
+        }
+    </style>
 </head>
 <body>
 <nav>
-    <a href="/">Home</a>|
-    <a href="/post">Post</a>|
-    <a href="/create_subject_page">Create Subject</a>|
-    <a href="/donate">Donate</a>|
-    <a href="/manage">Manage</a>
+    <div id="navigator">
+        <ul style="list-style: none">
+            <li style="float: left"> <a href="/">Home</a>|</li>
+            <li style="float: left"><a href="/post">Post</a>|</li>
+            <li style="float: left"><a href="/create_subject_page">Create Subject</a>|</li>
+            <li style="float: left"><a href="/donate">Donate</a>|</li>
+            <li><a href="/manage">Manage</a></li>
+        </ul>
+    </div>
+
 </nav>
 <div id="content">{% block content %}{% endblock %}</div>
 
