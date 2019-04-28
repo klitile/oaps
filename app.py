@@ -91,7 +91,12 @@ def add_subject():
 '''
     进入文章发表页面
 '''
-sensitive_words = ['妈的','智障','fuck','shit','wtf']
+sensitive_words = []
+with open('sensitive_word.txt', 'r') as f:
+    words = f.readlines()
+    for word in words:
+        sensitive_words.append(word.replace('\n', ''))
+
 @app.route('/post')
 def postPage():
     return render_template('post.html')
