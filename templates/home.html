@@ -3,9 +3,16 @@
 {% block title %}
     Home
 {% endblock %}
+<style>
 
+</style>
+{% block style %}
+    a{
+        text-decoration: none;
+    }
+{% endblock %}
 {% block content %}
-<div class="author">
+<div class="author" style="font-size: 18px;margin-top:5px">
     <form action="/author" method="post">
         Author Email:<input type="text" name="email" required>
         <input type="submit" value="submit">

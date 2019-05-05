@@ -81,7 +81,7 @@ def add_subject():
     form = request.form
     subject = subjectService.find_by_title(form['title'])
     if subject:
-        return 'Subject has existed!'
+        return 'Subject has existed!<a href="/">back to home</a>'
     subject = Subject(title=form['title'],description=form['description'])
     subjectService.insert(subject)
     return redirect('/')
@@ -135,7 +135,7 @@ def upload():
     subject = subjectService.find_by_title(form['subject'])
     if subject is None:
         return '<h2>There is no such subject, ' \
-               'please create the subject first.</h2>'
+               'please create the subject first.</h2><a href="/">back to home</a>'
 
     #验证码
     nextid = articleService.nextId()
@@ -263,6 +263,7 @@ def author_find():
 def search():
     content = request.args['content']
     articles = articleService.search(content)
+    print(articles.size())
     comments = commentService.search(content)
     return render_template('search_result.html',articles=articles,comments=comments)
 
@@ -307,8 +308,9 @@ def delet_article():
     psw = passwordService.get_password()
     aid = form['aid']
     input_psw = form['psw']
-    if(input_psw!=psw.psw): return "wrong password!"
+    if(input_psw!=psw.psw): return "Wrong password!"
     article = articleService.find_by_id(int(aid))
+    if(article==None): return "Article doesn't exist!"
     articleService.delete(article)
     return render_template('manage.html')
 
