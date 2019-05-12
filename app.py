@@ -2,7 +2,7 @@ from datetime import time, datetime
 import time
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
-
+import re
 import os
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -111,8 +111,8 @@ def upload():
     form = request.form
     for blank in form:
         if form[blank]=='': return "Blank can't be empty!"
-
-    if '@' not in form['email']: return "Wrong email address format!"
+    if re.match(r'^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+){0,4}@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+){0,4}$',form['email']) == None:
+        return "Wrong email address format!"
     file = request.files['pdf'].read()
     filename = request.files['pdf'].filename
     split = filename.split('.')
@@ -263,7 +263,7 @@ def author_find():
 def search():
     content = request.args['content']
     articles = articleService.search(content)
-    print(articles.size())
+    #print(articles.size())
     comments = commentService.search(content)
     return render_template('search_result.html',articles=articles,comments=comments)
 
