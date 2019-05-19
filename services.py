@@ -107,7 +107,18 @@ class ArticleService:
         db.session.commit()
 
     def search(self, content):
-        return Article.query.filter(Article.title.like('%%%s%%' % content)).all()
+        articles=[]
+        articles.extend(Article.query.filter(Article.title.like('%%%s%%' % content)).all())
+        articles.extend(Article.query.filter(Article.abstract.like('%%%s%%' % content)).all())
+        articles.extend(Article.query.filter(Article.highlight_part.like('%%%s%%' % content)).all())
+        rec=[]
+        result=[]
+        for article in articles: #remove the repeat articles
+            if article.id not in rec:
+                rec.append(article.id)
+                result.append(article)
+
+        return  result
 
 
 class UserService:
