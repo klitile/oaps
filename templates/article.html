@@ -28,6 +28,7 @@
  <h1>COMMENTS</h1>
     {% for comment in comments %}
         <p>{{ loop.index }}. Email:{{ comment.email }}</p>
+        <p>PostTime:{{ comment.postTime }}</p>
         <p> Content:{{ comment.content }}</p>
         <button><a href="../cupvote/{{ comment.id }}">up:{{ comment.upvoteNum }}</a></button>
         <button><a href="../cdownvote/{{ comment.id }}">down:{{ comment.downvoteNum }}</a></button>

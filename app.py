@@ -57,7 +57,7 @@ def subject(subject_id):
     articles.reverse()
     particles = []
     for article in articles:
-        if article.hided==1:
+        if article.hided == 1:
             articles.remove(article)
             continue
         article.score=articleService.calPopularity(article)
