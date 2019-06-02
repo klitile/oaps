@@ -42,9 +42,11 @@ def before_request():
     导航栏：首页、发表文章
     关于主题：首页显示所有主题名称及增加主题功能
 '''
+def getelem(elem): return elem.title
 @app.route('/')
 def home():
     subjects = subjectService.find_all_subject()
+    subjects.sort( key = getelem ,reverse=False)
     return render_template('home.html',subjects=subjects)
 
 '''
@@ -73,16 +75,30 @@ def subject(subject_id):
 def create_subject():
     return render_template('create_subject.html')
 
+sensitive_words = []
+with open('sensitive_word.txt', 'r') as f:
+    words = f.readlines()
+    for word in words:
+        sensitive_words.append(word.replace('\n', ''))
+
 '''
     增加主题
 '''
 @app.route('/add_subject',methods=['POST'])
 def add_subject():
     form = request.form
-    subject = subjectService.find_by_title(form['title'])
+    title = form['title'].title()
+    UpperTitle = title.upper()
+    for word in sensitive_words: #change all words to uppercase then check if their letter is same
+        word = word.upper()
+        print(word)
+        print(title)
+        if word in UpperTitle:
+            return 'contain inappropriate word(s)'
+    subject = subjectService.find_by_title(title)
     if subject:
         return 'Subject has existed!<a href="/">back to home</a>'
-    subject = Subject(title=form['title'],description=form['description'])
+    subject = Subject(title=title,description=form['description'])
     subjectService.insert(subject)
     return redirect('/')
 
@@ -91,11 +107,6 @@ def add_subject():
 '''
     进入文章发表页面
 '''
-sensitive_words = []
-with open('sensitive_word.txt', 'r') as f:
-    words = f.readlines()
-    for word in words:
-        sensitive_words.append(word.replace('\n', ''))
 
 @app.route('/post')
 def postPage():
@@ -119,7 +130,7 @@ def upload():
     if len(split) != 2 or split[1] != 'pdf':
         return 'unsupported file type'
     for content in form:
-        print(content)
+        #print(content)
         if content=='pdf':continue
         for word in sensitive_words:
             if word in form[content]:
