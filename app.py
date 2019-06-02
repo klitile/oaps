@@ -88,12 +88,12 @@ with open('sensitive_word.txt', 'r') as f:
 def add_subject():
     form = request.form
     title = form['title'].title()
-    UpperTitle = title.upper()
+    upperTitle = title.upper()
     for word in sensitive_words: #change all words to uppercase then check if their letter is same
         word = word.upper()
         print(word)
         print(title)
-        if word in UpperTitle:
+        if word in upperTitle:
             return 'contain inappropriate word(s)'
     subject = subjectService.find_by_title(title)
     if subject:
