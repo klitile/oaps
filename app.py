@@ -1,11 +1,16 @@
 from datetime import time, datetime
 import time
+import smtplib
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 import re
 import os
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from email.header import Header
+from email.mime.text import MIMEText
+from email.utils import parseaddr, formataddr
+
 app = Flask(__name__)
 limiter = Limiter(
     app,
@@ -113,6 +118,12 @@ def postPage():
     return render_template('post.html')
 
 
+# 处理邮件地址
+def _format_addr(s):
+    name, addr = parseaddr(s)
+    return formataddr((Header(name, 'utf-8').encode(), addr))
+
+
 '''
     处理文章上传
 '''
@@ -163,6 +174,16 @@ def upload():
     newFile = open(new_filename,"wb")
     newFile.write(file)
     newFile.close()
+    # 发送邮件
+    msg = MIMEText('hanks for posting article.If you are sure that you haven\'t post any articles in OAPS, please contact <a href="mailto:2912607882@qq.com">2912607882@qq.com</a> to delete it.', 'html', 'utf-8')
+    msg['From'] = _format_addr('2912607882@qq.com')
+    msg['To'] = _format_addr(email)
+    msg['Subject'] = Header('[OAPS]', 'utf-8').encode()
+    server = smtplib.SMTP('smtp.qq.com', 25)
+    server.set_debuglevel(1)
+    server.login('2912607882@qq.com', '***') # TODO 输入密码
+    server.sendmail('2912607882@qq.com', [email], msg.as_string())
+    server.quit()
     return redirect('/article/' + str(article.id))
 
 '''
