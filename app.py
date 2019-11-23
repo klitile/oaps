@@ -122,7 +122,27 @@ def postPage():
 def _format_addr(s):
     name, addr = parseaddr(s)
     return formataddr((Header(name, 'utf-8').encode(), addr))
-
+#发件人地址
+from_addr = 'xxx@163.com'
+#邮箱密码
+password = 'xxx'
+#收件人地址
+to_addr = '***@qq.com'
+#163网易邮箱服务器地址
+smtp_server = 'smtp.163.com'
+#设置邮件信息
+msg = MIMEText(content, 'plain', 'utf-8')
+msg['From'] = _format_addr(from_user+' <%s>' % from_addr)
+msg['To'] = _format_addr(to_user+' <%s>' % to_addr)
+msg['Subject'] = Header(title, 'utf-8').encode()
+#发送邮件
+i=0;
+while(i<10):
+  server = smtplib.SMTP(smtp_server, 25)
+  server.login(from_addr, password)
+  server.sendmail(from_addr, [to_addr], msg.as_string())
+  server.quit()
+  i=i+1
 
 '''
     处理文章上传
