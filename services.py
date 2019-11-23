@@ -118,7 +118,7 @@ class ArticleService:
                 rec.append(article.id)
                 result.append(article)
 
-        return  result
+        return result
 
 
 class UserService:
@@ -172,6 +172,8 @@ class CommentService:
         return Comment.query.filter_by(article_id=article_id).all()
     def find_by_userid(self,user_id):
         return Comment.query.filter_by(user_id=user_id).all()
+    def find_by_postTime(self,postTime):
+        return Comment.query.filter_by(postTime=postTime).all()
 
     def insert(self,comment):
         db.session.add(comment)
