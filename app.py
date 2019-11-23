@@ -80,7 +80,12 @@ def subject(subject_id):
 def create_subject():
     return render_template('create_subject.html')
 
+#判断主题是否存在
 sensitive_words = []
+if os.path.exists(sensitive_words):
+  print(sensitive_words + " exist!")
+else:
+  print("create " + sensitive_words)
 with open('sensitive_word.txt', 'r') as f:
     words = f.readlines()
     for word in words:
