@@ -131,7 +131,7 @@ def upload():
     form = request.form
     for blank in form:
         if form[blank]=='': return "Blank can't be empty!"
-    if re.match(\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b) == None:
+    if re.match('\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b',form['email']) == None:
         return "Wrong email address format!"
     file = request.files['pdf'].read()
     filename = request.files['pdf'].filename
